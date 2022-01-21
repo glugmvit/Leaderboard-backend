@@ -2,7 +2,7 @@ import json
 
 from Round import squidgameActivity
 from SquidGame import redLightGreenLight, dalgonaCookie, squidGame, tugOfWar
-from RedisDBMS import updateUser
+from RedisDBMS import updateUserScore
 
 
 
@@ -20,27 +20,27 @@ def addData(request):
     
     if round==11:        
         score=redLightGreenLight()
-        status=updateUser(username,round,score)
+        status=updateUserScore(username,round,score)
         print(f"{username} score update {score}, status: {status}")
         return status
     elif round==21:
-        score=dalgonaCookie()
-        status=updateUser(username,round,score)
+        score=dalgonaCookie(username,round,comment=(str(request['comment']['body'])).lower())
+        status=updateUserScore(username,round,score)
         print(f"{username} score update {score}, status: {status}")
         return status    
     elif round==22:
-        score=dalgonaCookie()
-        status=updateUser(username,round,score)
+        score=dalgonaCookie(username,round,comment=str(request['comment']['body']))
+        status=updateUserScore(username,round,score)
         print(f"{username} score update {score}, status: {status}")
         return status  
     elif round==31:
-        score=tugOfWar()
-        status=updateUser(username,round,score)
+        score=tugOfWar(request['pull_request']['additions'],request['pull_request']['changed_files'])
+        status=updateUserScore(username,round,score)
         print(f"{username} score update {score}, status: {status}")
         return status 
     elif round==41:
-        score=squidGame()
-        status=updateUser(username,round,score)
+        score=squidGame(str(request['pull_request']['rebaseable']))
+        status=updateUserScore(username,round,score)
         print(f"{username} score update {score}, status: {status}")
         return status
     

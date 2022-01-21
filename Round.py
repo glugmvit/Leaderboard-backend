@@ -6,6 +6,10 @@ import json
 # 31- round1 task1
 # 41- round2 task2
 
+def remove(string):
+    return "".join(string.split())
+
+
 def squidgameActivity(request):
 
     if 'forkee' in request.keys():
@@ -13,8 +17,8 @@ def squidgameActivity(request):
     
     elif 'issue'  in request.keys():
         shapes=['triangle', 'star','circle','umbrella']
-        print((str(request['comment']['body'])).lower())
-        if (str(request['comment']['body'])).lower() in shapes:
+        print(remove((str(request['comment']['body'])).lower()))
+        if remove((str(request['comment']['body'])).lower()) in shapes:
             return 21
         else:
             return 22
@@ -24,7 +28,7 @@ def squidgameActivity(request):
         # print(str(request['pull_request']['rebaseable']))
         if request['action']=='opened' and str(request['pull_request']['rebaseable'])=='None':
             return 31
-        elif request['action']=='opened':
+        elif request['action']=='opened' and str(request['pull_request']['rebaseable'])!='None':
             return 41
         else:
             return 0

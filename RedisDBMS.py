@@ -4,9 +4,16 @@ import redis
 r= redis.Redis(host='localhost')
 
 
-def updateUser(username,round,score):
+def updateUserScore(username,round,score):
+    return 'success'
+
+def updateUserShape(username,comment):
     return 'success' 
 
 
-def updateAnswerKey():
+def updateAnswerKey(username,comment):
+    return 'success'
+
+
+def checkAns(username,ans):
     return 'success'
