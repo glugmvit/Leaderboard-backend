@@ -1,53 +1,65 @@
 import redis
+from redis.commands.json.path import Path
+import json
 
+r = redis.from_url( url='redis://redis-18607.c279.us-central1-1.gce.cloud.redislabs.com:18607',password='Z2PfDUUz8IumHhEs0kj28HE8oum4S4OS')
 
-r= redis.Redis(host='localhost')
-
-ShapeKey = {
+AnsKey = {
         "triangle":99999,
         "circle":88888,
         "umbrella":77777,
         "star":66666
     }
-AnsKey = {
-        99999:'hii',
-        88888:'hello',
-        77777:'hlo',
-        66666:'hlooo'
-    }
+
 def updateUserScore(username,round,score):
-    try:
-       if(round==11):
-           r.zadd(username,"score",score)
-       else:
-           r.zincrby(username,score,'score')
-    except:
-        print("error")
+
+    # if(round==21 or (round==22 and score==10)):
+    #     points = 20
+    # elif(round==22 and score==0):
+    #     points = 10
+    # elif(round==31):
+    #     points = 30
+    # else:
+    #     points = 40
+    # data = {
+    # 'score':points,
+    # 'round':round
+    # }
+    #r.execute_command('JSON.SET', username, '.', json.dumps(data))
+    data = {
+    'score':score,
+    'round':round
+    } 
+    if(round==11):
+        r.execute_command('JSON.SET', username, '.', json.dumps(data))
+
+    else:
+        r.execute_command('JSON.NUMINCRBY' , username ,'.score', score)
+    reply = json.loads(r.execute_command('JSON.GET', username))
+    print(f"upadte score= {reply['score']}")
     return 'success'
 
 def updateUserShape(username,comment):
-    try:
-        shape = ShapeKey[comment]
-        r.zadd(username,"shape",shape)
-    except:
-        print("error")
+    data = {
+    'shape':comment
+    }
+    r.execute_command('JSON.SET', username, '.', json.dumps(data))
+    reply = json.loads(r.execute_command('JSON.GET', username))
+    print(f"user shape = {reply['shape']}")
     return 'success' 
 
 
 def updateAnswerKey(username,comment):
-    try:
-        cmnt = int(comment)
-        r.zadd(username,'answer',cmnt)
-    except:
-        print('error')
-    return 'success'
+    data = {
+    'answer':comment
+    }
+    r.execute_command('JSON.SET', username, '.', json.dumps(data))
+    reply = json.loads(r.execute_command('JSON.GET', username))
+    print(f"user answer = {reply['answer']}")
+    return reply['answer']
 
 def checkAns(username,ans):
-   shape = r.zscore(username,'shape')
-   answer = AnsKey[shape]
-   intAnswer = int(answer)
-   UserAns = int(ans)
-   
-   if(UserAns == intAnswer):
-       return True
-   return False    
+    reply = json.loads(r.execute_command('JSON.GET', username))
+    if(reply['answer'] == ans):
+        return True
+    return False
