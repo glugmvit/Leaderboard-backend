@@ -1,6 +1,6 @@
 import json
 
-from RedisDBMS import updateAnswerKey,updateUserShape,checkAns
+from RedisDBMS import updateUserShape,checkAns
 
 def score():
     #score logic
@@ -17,8 +17,8 @@ def dalgonaCookie(username,round,comment):
             print('success 21')
             return score()
     elif round==22:
-        answer = updateAnswerKey(username,comment)
-        status=checkAns(username,answer)
+        status=checkAns(username,comment)
+        print('ans is right')
         if status=='success':
             print('success 22')
             return score()
